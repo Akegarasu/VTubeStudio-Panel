@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Power, Zap, Smile, Tv, ChevronsRight, Unplug } from "lucide-react";
+import Card from "./components/card";
+import { ExpressionGroupManager } from "./components/ExpressionGroup";
 
 // API 常量
 const VTS_API_NAME = "VTubeStudioPublicAPI";
@@ -7,36 +9,46 @@ const VTS_API_VERSION = "1.0";
 const PLUGIN_NAME = "VTS-Web-Console";
 const PLUGIN_DEVELOPER = "akibanzu";
 
-// 首次使用引导弹窗
 const GuideDialog = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
       <div
         className="bg-gray-800 rounded-lg shadow-xl w-[60%] h-[90vh] flex flex-col"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex-1 overflow-y-auto">
           <div className="sticky top-0 z-10">
-            <h3 className="text-xl font-bold text-white bg-gray-800/95 shadow-md px-6 pt-6 pb-4 rounded-t-lg">首次使用说明</h3>
+            <h3 className="text-xl font-bold text-white bg-gray-800/95 shadow-md px-6 pt-6 pb-4 rounded-t-lg">
+              首次使用说明
+            </h3>
           </div>
           <div className="space-y-6 px-6 pb-6">
             <div className="space-y-4">
               <p className="text-gray-300">
-                虽然这个控制台是网页版的，但并不会传输任何数据到服务器~ 源代码已开源：
-                <a href="https://github.com/Akegarasu/VTubeStudio-Panel"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   className="text-purple-400 hover:text-purple-300"
+                虽然这个控制台是网页版的，但并不会传输任何数据到服务器~
+                源代码已开源：
+                <a
+                  href="https://github.com/Akegarasu/VTubeStudio-Panel"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-400 hover:text-purple-300"
                 >
                   Github Akegarasu
                 </a>
               </p>
-              <p className="text-gray-300">下面需要你进行一些操作授权才可以操控 VTS 哦！</p>
+              <p className="text-gray-300">
+                下面需要你进行一些操作授权才可以操控 VTS 哦！
+              </p>
             </div>
             <div>
-              <p className="text-gray-300 font-medium mb-2">1. 打开 VTube Studio 的设置页面，开启 API：</p>
+              <p className="text-gray-300 font-medium mb-2">
+                1. 打开 VTube Studio 的设置页面，开启 API：
+              </p>
               <img
                 src="/api_settings.webp"
                 alt="VTS API Settings"
@@ -44,7 +56,9 @@ const GuideDialog = ({ isOpen, onClose }) => {
               />
             </div>
             <div>
-              <p className="text-gray-300 font-medium mb-2">2. 点击"连接"后在 VTS 中授权插件：</p>
+              <p className="text-gray-300 font-medium mb-2">
+                2. 点击"连接"后在 VTS 中授权插件：
+              </p>
               <img
                 src="/auth.webp"
                 alt="VTS Plugin Authorization"
@@ -131,16 +145,6 @@ const StatusIndicator = ({ status }) => {
     </div>
   );
 };
-
-const Card = ({ title, icon, children }) => (
-  <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden h-full flex flex-col">
-    <div className="p-4 bg-gray-700/50 flex items-center space-x-3">
-      {icon}
-      <h2 className="text-lg font-semibold text-white">{title}</h2>
-    </div>
-    <div className="p-4 flex-grow overflow-y-auto">{children}</div>
-  </div>
-);
 
 const ConnectionManager = ({
   status,
@@ -333,7 +337,10 @@ function App() {
   const [expressions, setExpressions] = useState([]);
   const [hotkeys, setHotkeys] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
-  const [showGuide, setShowGuide] = useState(!localStorage.getItem("vtsGuideShown"));
+  const [showGuide, setShowGuide] = useState(
+    !localStorage.getItem("vtsGuideShown")
+  );
+  const isTriggeringGroup = useRef(false);
 
   const ws = useRef(null);
   const requestCounter = useRef(0);
@@ -343,7 +350,9 @@ function App() {
     const timer = setTimeout(() => {
       if (localStorage.getItem("vtsAuthToken")) {
         if (status === "disconnected") {
-          document.activeElement && document.activeElement.blur && document.activeElement.blur();
+          document.activeElement &&
+            document.activeElement.blur &&
+            document.activeElement.blur();
           if (typeof connect === "function") connect();
         }
       }
@@ -400,6 +409,30 @@ function App() {
       });
     }
   }, [sendRequest]);
+
+  // 触发表情套组
+  const triggerExpressionGroup = useCallback(
+    (list) => {
+      isTriggeringGroup.current = true;
+      setTimeout(() => {
+        isTriggeringGroup.current = false;
+        fetchExpressionStateRequest();
+      }, list.length * 80 + 200);
+
+      list.forEach(({ file, active }, idx) => {
+        // find in current expressions
+        // const currentExp = expressions.find((e) => e.file === file);
+        // const finalActivate = currentExp ? !currentExp.active : false;
+        setTimeout(() => {
+          sendRequest("ExpressionActivationRequest", {
+            expressionFile: file,
+            active: active,
+          });
+        }, idx * 80);
+      });
+    },
+    [fetchExpressionStateRequest, sendRequest]
+  );
 
   const connect = useCallback(() => {
     if (ws.current && ws.current.readyState !== WebSocket.CLOSED) return;
@@ -477,6 +510,7 @@ function App() {
           setExpressions(response.data.expressions);
           break;
         case "ExpressionActivationResponse":
+          if (isTriggeringGroup.current) return;
           // Refresh expressions after activation
           sendRequest("ExpressionStateRequest", { details: false });
           break;
@@ -504,6 +538,7 @@ function App() {
     handleAuthentication,
     fetchCurrentModelRequest,
     fetchExpressionStateRequest,
+    isTriggeringGroup,
     sendRequest,
     fetchAllData,
   ]);
@@ -556,7 +591,7 @@ function App() {
       <GuideDialog isOpen={showGuide} onClose={handleGuideClose} />
       <TopErrorToast message={errorMsg} onClose={() => setErrorMsg("")} />
       <Header />
-      <main className="p-4 md:p-6 lg:p-8">
+      <main className="p-4 md:p-6 lg:p-8 max-w-screen-2xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
           <div className="md:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             <ConnectionManager
@@ -582,6 +617,11 @@ function App() {
             hotkeys={hotkeys}
             triggerHotkey={triggerHotkey}
             isEnabled={isEnabled}
+          />
+          <ExpressionGroupManager
+            expressions={expressions}
+            triggerGroup={triggerExpressionGroup}
+            modelID={currentModel?.modelID || ""}
           />
         </div>
       </main>
