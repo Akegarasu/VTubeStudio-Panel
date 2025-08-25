@@ -12,30 +12,48 @@ const GuideDialog = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-lg shadow-xl max-w-lg w-full">
-        <div className="p-6 space-y-4">
-          <h3 className="text-xl font-bold text-white">首次使用说明</h3>
-          <div className="space-y-4">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        className="bg-gray-800 rounded-lg shadow-xl w-[60%] h-[90vh] flex flex-col"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex-1 overflow-y-auto">
+          <div className="sticky top-0 z-10">
+            <h3 className="text-xl font-bold text-white bg-gray-800/95 shadow-md px-6 pt-6 pb-4 rounded-t-lg">首次使用说明</h3>
+          </div>
+          <div className="space-y-6 px-6 pb-6">
+            <div className="space-y-4">
+              <p className="text-gray-300">
+                虽然这个控制台是网页版的，但并不会传输任何数据到服务器~ 源代码已开源：
+                <a href="https://github.com/Akegarasu/VTubeStudio-Panel"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="text-purple-400 hover:text-purple-300"
+                >
+                  Github Akegarasu
+                </a>
+              </p>
+              <p className="text-gray-300">下面需要你进行一些操作授权才可以操控 VTS 哦！</p>
+            </div>
             <div>
-              <p className="text-gray-300 mb-2">虽然这个控制台是网页版的，但并不会传输任何数据到服务器~ 源代码已开源：Github Akegarasu</p>
-              <p className="text-gray-300 mb-2">下面需要你进行一些操作授权才可以操控 VTS 哦！</p>
-              <p className="text-gray-300 mb-2">1. 打开 VTube Studio 的设置页面，开启 API：</p>
+              <p className="text-gray-300 font-medium mb-2">1. 打开 VTube Studio 的设置页面，开启 API：</p>
               <img
                 src="/api_settings.webp"
                 alt="VTS API Settings"
-                className="rounded-lg border border-gray-600 w-full"
+                className="rounded-lg border border-gray-600 w-[80%] mx-auto"
               />
             </div>
             <div>
-              <p className="text-gray-300 mb-2">2. 点击"连接"后在 VTS 中授权插件：</p>
+              <p className="text-gray-300 font-medium mb-2">2. 点击"连接"后在 VTS 中授权插件：</p>
               <img
                 src="/auth.webp"
                 alt="VTS Plugin Authorization"
-                className="rounded-lg border border-gray-600 w-full"
+                className="rounded-lg border border-gray-600 w-[80%] mx-auto"
               />
             </div>
           </div>
+        </div>
+        <div className="p-6 bg-gray-800 border-t border-gray-700">
           <button
             onClick={onClose}
             className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-md font-semibold transition-colors duration-200"
