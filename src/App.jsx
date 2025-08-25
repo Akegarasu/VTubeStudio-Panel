@@ -608,16 +608,18 @@ function App() {
               isEnabled={isEnabled}
             />
           </div>
-          <ExpressionManager
-            expressions={expressions}
-            activateExpression={activateExpression}
-            isEnabled={isEnabled}
-          />
-          <HotkeyManager
-            hotkeys={hotkeys}
-            triggerHotkey={triggerHotkey}
-            isEnabled={isEnabled}
-          />
+          <div className="md:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            <ExpressionManager
+              expressions={expressions}
+              activateExpression={activateExpression}
+              isEnabled={isEnabled}
+            />
+            <HotkeyManager
+              hotkeys={hotkeys}
+              triggerHotkey={triggerHotkey}
+              isEnabled={isEnabled}
+            />
+          </div>
           <ExpressionGroupManager
             expressions={expressions}
             triggerGroup={triggerExpressionGroup}
@@ -626,7 +628,7 @@ function App() {
         </div>
       </main>
       <footer className="text-center p-4 text-xs text-gray-500">
-        <p>Made with ♥ By 秋葉aaaki</p>
+        <p>Made with ♥ By <a href="https://space.bilibili.com/12566101">秋葉aaaki</a></p>
       </footer>
     </div>
   );
