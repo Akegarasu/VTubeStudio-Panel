@@ -338,6 +338,20 @@ function App() {
   const ws = useRef(null);
   const requestCounter = useRef(0);
 
+  // 页面加载后自动连接（如有token）
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (localStorage.getItem("vtsAuthToken")) {
+        if (status === "disconnected") {
+          document.activeElement && document.activeElement.blur && document.activeElement.blur();
+          if (typeof connect === "function") connect();
+        }
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // --- WebSocket  ---
 
   const sendRequest = useCallback((messageType, data = {}) => {
