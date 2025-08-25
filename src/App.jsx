@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Power, Zap, Smile, Tv, ChevronsRight, Unplug } from "lucide-react";
-import Card from "./components/card";
+import Card from "./components/Card";
 import { ExpressionGroupManager } from "./components/ExpressionGroup";
 
 // API 常量

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Power, Zap, Smile, Tv, ChevronsRight, Unplug } from "lucide-react";
-import Card from "./card";
+import Card from "./Card";
 
 const ExpressionGroupDialog = ({
   open,
@@ -10,7 +10,6 @@ const ExpressionGroupDialog = ({
   initial,
 }) => {
   const [name, setName] = React.useState(initial?.name || "");
-  const [touched, setTouched] = React.useState(false);
   const [selected, setSelected] = React.useState(initial?.list || []);
 
   React.useEffect(() => {
@@ -65,7 +64,6 @@ const ExpressionGroupDialog = ({
             placeholder="套组名称"
             value={name}
             onChange={e => setName(e.target.value)}
-            onBlur={() => setTouched(true)}
           />
           {!name && (
             <div className="text-xs text-red-400 mt-1">请输入套组名称</div>
