@@ -22,7 +22,7 @@ const GuideDialog = ({ isOpen, onClose }) => {
               <p className="text-gray-300 mb-2">下面需要你进行一些操作授权才可以操控 VTS 哦！</p>
               <p className="text-gray-300 mb-2">1. 打开 VTube Studio 的设置页面，开启 API：</p>
               <img
-                src="/src/assets/api_settings.webp"
+                src="/public/api_settings.webp"
                 alt="VTS API Settings"
                 className="rounded-lg border border-gray-600 w-full"
               />
@@ -30,7 +30,7 @@ const GuideDialog = ({ isOpen, onClose }) => {
             <div>
               <p className="text-gray-300 mb-2">2. 点击"连接"后在 VTS 中授权插件：</p>
               <img
-                src="/src/assets/auth.webp"
+                src="/public/auth.webp"
                 alt="VTS Plugin Authorization"
                 className="rounded-lg border border-gray-600 w-full"
               />
@@ -89,7 +89,7 @@ const TopErrorToast = ({ message, onClose }) => {
 const Header = () => (
   <header className="bg-gray-900 text-white p-4 shadow-lg flex items-center justify-center">
     <img
-      src="/src/assets/vtube_studio_logo_nyan_2.webp"
+      src="/public/vtube_studio_logo_nyan_2.webp"
       alt="VTube Studio Logo"
       className="h-10 mr-4"
     />
